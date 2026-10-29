@@ -1,41 +1,32 @@
-const menuBtn = document.getElementById("menuBtn");
-const nav = document.getElementById("nav");
-const year = document.getElementById("year");
 
-menuBtn.addEventListener("click", () => {
-  nav.classList.toggle("open");
-});
+const menuButton = document.getElementById("menuBtn");
+const navigation = document.getElementById("nav");
 
-document.querySelectorAll("#nav a").forEach(link => {
-  link.addEventListener("click", () => nav.classList.remove("open"));
-});
+if (menuButton && navigation) {
+  menuButton.addEventListener("click", () => {
+    const isOpen = navigation.classList.toggle("open");
 
-year.textContent = new Date().getFullYear();
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+    menuButton.setAttribute(
+      "aria-label",
+      isOpen ? "Close navigation" : "Open navigation"
+    );
 
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add("visible");
+    menuButton.textContent = isOpen ? "×" : "☰";
   });
-}, { threshold: 0.12 });
 
-document.querySelectorAll(".section, .project-card, .skill-card").forEach(el => {
-  el.style.opacity = "0";
-  el.style.transform = "translateY(18px)";
-  el.style.transition = "opacity .55s ease, transform .55s ease";
-  observer.observe(el);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".visible").forEach(el => {
-    el.style.opacity = "1";
-    el.style.transform = "translateY(0)";
+  navigation.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", () => {
+      navigation.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.setAttribute("aria-label", "Open navigation");
+      menuButton.textContent = "☰";
+    });
   });
-});
+}
 
-const styleObserver = new MutationObserver(() => {
-  document.querySelectorAll(".visible").forEach(el => {
-    el.style.opacity = "1";
-    el.style.transform = "translateY(0)";
-  });
-});
-styleObserver.observe(document.body, { attributes: true, subtree: true, attributeFilter: ["class"] });
+const yearElement = document.getElementById("year");
+
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
+}
